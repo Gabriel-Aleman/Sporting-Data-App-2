@@ -1,0 +1,38 @@
+table {
+    width: 70%;
+    margin: 20px auto;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    overflow: hidden;
+}
+th {
+    background-color: #cf8e3f; /* Color del encabezado */
+    color: white;
+    padding: 10px;
+    text-align: center;
+}
+td {
+    background-color: #bebeb5ba; /* Color del resto de la tabla */
+    padding: 10px;
+    text-align: center;
+    border-top: 1px solid #ccc;
+}
+/* Seleccionar la primera columna de todas las filas */
+table tr td:first-child {
+    background-color: #f0f8ff; /* Color azul claro */
+    color: #000; /* Texto negro */
+}
+
+/* Si también deseas estilizar el encabezado */
+table tr th:first-child {
+    background-color: rgb(166, 71, 71); /* Color azul más oscuro */
+    color: white; /* Texto blanco */
+}
+
+tr:hover td {
+    background-color: #4f4444; /* Color al pasar el cursor */
+}

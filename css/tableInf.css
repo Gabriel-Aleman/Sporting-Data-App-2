@@ -1,0 +1,35 @@
+table {
+    width: 70%;
+    margin: 20px auto;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    
+}
+th {
+    background-color: #4CAF50; /* Color del encabezado */
+    color: white;
+    padding: 10px;
+    text-align: center;
+}
+td {
+    background-color: #797979; /* Color del resto de la tabla */
+    padding: 10px;
+    text-align: center;
+    border-top: 1px solid #ccc;
+}
+table tr:first-child {
+    background-color: rgb(130, 221, 171); /* Color azul más oscuro */
+    color: white; /* Texto blanco */
+}
+
+
+
+
+tr:hover td {
+    background-color: rgb(29, 109, 2); /* Color azul más oscuro */
+    color: white; /* Texto blanco */
+}
