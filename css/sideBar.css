@@ -1,0 +1,61 @@
+/* Reset */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* Estilo del Sidebar */
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: linear-gradient(180deg, #ff7e5f, #feb47b); /* Gradiente */
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    color: #fff;
+    padding: 20px;
+    transition: width 0.3s ease;
+}
+
+.sidebar h2 {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 30px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+    padding-bottom: 10px;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin: 20px 0;
+}
+
+.sidebar ul li a {
+    text-decoration: none;
+    color: #fff;
+    font-size: 18px;
+    display: block;
+    padding: 10px;
+    border-radius: 8px;
+    transition: background 0.3s ease;
+}
+
+.sidebar ul li a:hover {
+    background: rgba(255, 255, 255, 0.2); /* Resalta el enlace */
+}
+
+/* Contenido Principal */
+.content {
+    margin-left: 250px; /* Deja espacio para el sidebar */
+    padding: 20px;
+}
+
+/* Sidebar colapsable (opcional) */
+.sidebar:hover {
+    width: 300px; /* Ancho más grande al pasar el cursor */
+}
