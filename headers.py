@@ -8,6 +8,7 @@ from streamlit_extras.dataframe_explorer import dataframe_explorer
 from streamlit_extras.let_it_rain import rain
 from streamlit_extras.stylable_container import stylable_container
 from streamlit_extras.app_logo import add_logo
+from streamlit_extras.colored_header import colored_header
 
 f=open("css/tableInf.css")
 css=f.read()
@@ -16,4 +17,9 @@ f.close()
 
 f=open("css/table_play.css")
 css_p=f.read()
+f.close()
+
+
+f=open("css/sideBar.css")
+css_sb=f.read()
 f.close()

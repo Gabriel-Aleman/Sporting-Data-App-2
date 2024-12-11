@@ -7,7 +7,13 @@ st.set_page_config(
     page_title="SFC DATA APP",
     page_icon=image_path
 )
-add_logo("http://placekitten.com/120/120")
+st.logo("https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Sporting_Football_Club_2019.png/157px-Sporting_Football_Club_2019.png")
+
+
+
+
+with st.sidebar:
+    st.write("Hola mundo")
 # Redondear bordes de la imagen usando HTML y CSS
 html_code = f"""
 <style>
@@ -22,83 +28,79 @@ img {{
 #--------------------------------------------------------------------------
 col1, col2 = st.columns([1,5])
 with col2:
-    st.header("SFC: Data - APP",divider=True)
+    colored_header(
+        label="SFC: Data - APP",
+        description="¡Somos Sporting, Somos Pura Vida!",
+        color_name="violet-70",
+    )
+#st.header("SFC: Data - APP",divider=True)
 with col1:
     st.markdown(html_code, unsafe_allow_html=True)
 add_vertical_space(1)
 #--------------------------------------------------------------------------
+#TODO: Actualizar el apartado para ingresar el token
 
+
+fr= wimuApp.inform.sort_values(by="Fecha")["Fecha"].iloc[0]
+fr = datetime.strptime(fr,  "%Y-%m-%d %H:%M")
+
+lr= wimuApp.inform.sort_values(by="Fecha")["Fecha"].iloc[-1]
+lr = datetime.strptime(lr,  "%Y-%m-%d %H:%M")
 
 if 'listAlreadyDone' not in st.session_state:
     st.session_state.listAlreadyDone = False
 if 'df' not in st.session_state:
     st.session_state.df =  wimuApp.inform
 if "bd" not in st.session_state:
-    st.session_state.bd = wimuApp.inform.sort_values(by="Fecha")["Fecha"].iloc[0]
-if "ed" not in st.session_state:
-    st.session_state.ed = wimuApp.inform.sort_values(by="Fecha")["Fecha"].iloc[-1]
 
-tab1, tab2 = st.tabs(["Informe", "Estadísticas"])
+    st.session_state.bd = fr
+if "ed" not in st.session_state:
+
+    st.session_state.ed = lr
+
+if "df"not in st.session_state:
+    st.session_state.df = wimuApp.inform
+
+tab1, tab2 = st.tabs(["📄Informe", "📊Estadísticas"])
 
 with tab1:
-    #st.markdown("### • Opciones de filtrado:")
-    
-    col1, co2= st.columns(2)
-    with col1:
-        with st.expander("### Filtros"):
-            with stylable_container(
-                key="container_with_border",
-                css_styles="""
-                    {
-                        border-radius: 10px; /* Bordes redondeados */
+    with st.expander("### • Filtros"):
 
-                        padding: 5px; /* Espaciado interno */
-                        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6); /* Sombra suave */
-                    }
-                    """,
-            ): c=st.container()
-            with c:
-                col1, col2, col3, col4 = st.columns(4)
-                with col1:
-                    ops_MD= ["Todos"]
-                    ops_MD.extend(pd.unique(wimuApp.session["matchDay"]))
-                    with st.popover("⚽ X MD"):
-                        md = st.selectbox("Qué MD le interesa", ops_MD)
-                with col2:
-                    ops_Pos= ["Todos"]
-                    ops_Pos.extend(pd.unique(wimuApp.players["Posición"]))
-                    with st.popover("📍 X Posición"):
-                        pos = st.selectbox("Qué posisición le interesa",ops_Pos)
-                with col3: 
-                    with st.popover("⏰ X duración"):
-                        t = st.slider("Filtrar por duración:", wimuApp.inform["Duración"].min(), wimuApp.inform["Duración"].max(), (wimuApp.inform["Duración"].min(),wimuApp.inform["Duración"].max()))
-                        limInf,limSup = t
-                with col4:
-                    with st.popover("📅 X fecha"):
-                        st.session_state.bd= st.date_input("Fecha de inicio")
-                        #st.session_state.ed= st.date_input("Fecha de fin")
-    with col2:
-        datos = [[10, 11, 12, 13],
-          [20, 21, 22, 23],
-          [30, 31, 32, 33]]
-        datos = pd.DataFrame(datos)
-        #st.download_button("Descargar informe ⬇️", datos.to_excel())
-
+        col1, col2, col3, col4 = st.columns(4)
+        with col1:
+            ops_MD= ["Todos"]
+            ops_MD.extend(pd.unique(wimuApp.session["matchDay"]))
+            with st.popover("⚽ X MD"):
+                md = st.selectbox("Qué MD le interesa", ops_MD)
+        with col2:
+            ops_Pos= ["Todos"]
+            ops_Pos.extend(pd.unique(wimuApp.players["Posición"]))
+            with st.popover("📍 X Posición"):
+                pos = st.selectbox("Qué posisición le interesa",ops_Pos)
+        with col3: 
+            with st.popover("⏰ X duración"):
+                t = st.slider("Filtrar por duración:", wimuApp.inform["Duración"].min(), wimuApp.inform["Duración"].max(), (wimuApp.inform["Duración"].min(),wimuApp.inform["Duración"].max()))
+                limInf,limSup = t
+        with col4:
+            with st.popover("📅 X fecha"):
+                st.session_state.ed= st.date_input("Fecha de fin", value=lr, min_value=fr, max_value=lr)
+                st.session_state.bd= st.date_input("Fecha de inicio", value=fr, min_value=fr, max_value=lr)
+        st.info(f"**MD**:{md}   ‎‎‎     **Posición**:{pos}  ‎‎‎      **Duración**: {limInf}-{limSup} (min)")
     wimuApp.infXMD(md)
-    df=wimuApp.styledInform[wimuApp.styledInform['Jugador'].isin(wimuApp.jugxPos[pos])] if pos!="Todos" else wimuApp.styledInform
-    df=df.query("Duración <=@limSup and Duración >=@limInf")
-    df["Fecha"]=pd.to_datetime(df["Fecha"])
-    df=df.query("Fecha <=@st.session_state.bd")
-    st.session_state.df = df
+    st.session_state.df=wimuApp.styledInform[wimuApp.styledInform['Jugador'].isin(wimuApp.jugxPos[pos])] if pos!="Todos" else wimuApp.styledInform
+    st.session_state.df=st.session_state.df.query("Duración <=@limSup and Duración >=@limInf")
+    st.session_state.df["Fecha"]=pd.to_datetime(st.session_state.df["Fecha"])
+    st.session_state.df=st.session_state.df.query("Fecha >=@st.session_state.bd and Fecha <=@st.session_state.ed")
+    st.session_state.df = st.session_state.df
     #TODO: Mover parte superior
 
     # Redondear a 2 decimales solo las columnas numéricas
-    df[df.select_dtypes(include='number').columns] = df.select_dtypes(include='number').round(2)
+    st.session_state.df[st.session_state.df.select_dtypes(include='number').columns] = st.session_state.df.select_dtypes(include='number').round(2)
     
-    st.dataframe(df.reset_index(drop=True))
+    st.dataframe(st.session_state.df.reset_index(drop=True))
     col1, col2= st.columns([27,14])
 
-    with col1: st.info(f"**MD**:{md}   ‎‎‎     **Posición**:{pos}  ‎‎‎      **Duración**: {limInf}-{limSup} (min)")
+    #with col2:
     with col2:
         with stylable_container(
             "bses",
@@ -111,7 +113,8 @@ with tab1:
                 border-radius: 5px;
                 display: inline-block; /* Para ajustar al contenido */
             }""",
-        ):    st.write(f"📝 {len(df)} datos en la busqueda")
+        ):    st.write(f"📝 {len(st.session_state.df)} datos en la busqueda")
+
 
 with tab2:
     df_data=st.session_state.df[st.session_state.df.columns[4:]]

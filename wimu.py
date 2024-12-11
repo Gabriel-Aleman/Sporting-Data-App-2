@@ -8,7 +8,7 @@ zona_horaria = pytz.timezone('America/Costa_Rica')  # Puedes cambiar la zona hor
 hoy = pd.Timestamp(datetime.now(tz=zona_horaria)).tz_localize(None)
 
 
-tokenWimu= "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2NjkxMmRlNmVlNGQ3ZTM1NTIzYmZmMDciLCJjbHViIjoiNjQwZWVjOWE4NTY2ZDQxMmMyZTdlZGUyIiwiY2VudGVyIjoiNjQwZWVkMTE4NTY2ZDQxMmMyZTgxZWRiIiwidXNlclR5cGUiOiJDRU5URVJfQURNSU4iLCJ1c2VyIjoiNjY5MTJkZTZlZTRkN2UzNTUyM2JmZjA3IiwiZXhwIjoxNzMzMTQ0NTQ4fQ.zo7ditcZCM4bbtyMvA6pJPLNuwdGH3zW0fmaR_5NhCk"
+tokenWimu= "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2NjkxMmRlNmVlNGQ3ZTM1NTIzYmZmMDciLCJjbHViIjoiNjQwZWVjOWE4NTY2ZDQxMmMyZTdlZGUyIiwiY2VudGVyIjoiNjQwZWVkMTE4NTY2ZDQxMmMyZTgxZWRiIiwidXNlclR5cGUiOiJDRU5URVJfQURNSU4iLCJ1c2VyIjoiNjY5MTJkZTZlZTRkN2UzNTUyM2JmZjA3IiwiZXhwIjoxNzM0NDQwMzM1fQ.My4K4JezASVS36X6CdifkeEqFaRmfA28O3oPp1Vt1PE"
 
 headersWimu = {
     "accept": "application/json",
@@ -16,7 +16,7 @@ headersWimu = {
 }
 
 urlsWimu ={
-      "url1":       "https://wimupro.wimucloud.com/apis/rest/login?username=gabrielSFC&password=gabrielSFC1234%2A", #Usuario
+      "urlToken":       "https://wimupro.wimucloud.com/apis/rest/test", #Token
       "urlTeams":   "https://wimupro.wimucloud.com/apis/rest/teams",                                                #Equipos 
       "urlClub":    "https://wimupro.wimucloud.com/apis/rest/clubs"                                                 #Clubes
 }
@@ -25,19 +25,26 @@ urlsWimu ={
 class myTeamAPIWimu(API):
     def __init__(self, header, urls, index=0):
         super().__init__(urls, header)
-        
-        #IDLE:
-        self.getTeams() #Obtener la lista de equipos
-        self.getClubs() #Obtener la lista de clubes
+        self.tokenIsValid =self.checkAPI()
         self.inform = pd.read_excel("informe.xlsx", sheet_name="informe")
         self.session = pd.read_excel("informe.xlsx", sheet_name="listadoSesiones").set_index("id")
         self.getStyledInform() #Informe que se le muestra al ususario
 
-        if index==0:  #Predeterminado, escoger 1aM como mi equipo
-            self.getMyTeam(id="640eed118566d412c2e81edb")
-             
-            self.getMyPlayers()
-            self.jugXpos()    
+    
+        if self.tokenIsValid:
+            #IDLE:
+            self.getTeams() #Obtener la lista de equipos
+            self.getClubs() #Obtener la lista de clubes
+        
+            if index==0:  #Predeterminado, escoger 1aM como mi equipo
+                self.getMyTeam(id="640eed118566d412c2e81edb")
+                
+                self.getMyPlayers()
+                self.jugXpos() 
+
+    def checkAPI(self):
+        response = requests.get(self.urls["urlToken"], headers=self.header)
+        return (response.status_code == 200)        
     """
     getClubs: Método para obtener la lista de clubes matriculados.
     """
@@ -373,8 +380,8 @@ class myTeamAPIWimu(API):
         if(MD)!= "Todos":
             MD=self.session.query('matchDay == @MD')
             #Lista de sesiones en el informe que fueron un MD
-            MD_Filter=np.intersect1d(pd.unique(wimuApp.inform["Sesión"]), MD.index)
-            inf_Filter=wimuApp.inform[wimuApp.inform["Sesión"].isin(MD_Filter)]
+            MD_Filter=np.intersect1d(pd.unique(self.inform["Sesión"]), MD.index)
+            inf_Filter=self.inform[self.inform["Sesión"].isin(MD_Filter)]
             self.getStyledInform(inf_Filter)
         else:
             self.getStyledInform()
